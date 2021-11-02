@@ -10,6 +10,7 @@ from contextlib import contextmanager
 import warnings
 
 import numpy as np
+import skorch
 import torch
 from mne.utils.check import check_version
 from skorch.callbacks.scoring import EpochScoring
@@ -355,7 +356,8 @@ class PostEpochTrainScoring(EpochScoring):
             for batch in iterator:
                 batch_X, batch_y = unpack_data(batch)
                 # TODO: remove after skorch 0.10 release
-                if not check_version('skorch', min_version='0.10.1'):
+                if (skorch.__version__ != 'n/a') and (not check_version('skorch', min_version='0.10.1')):
+                    # Assuming skorch version n/a implies up to date
                     yp = net.evaluation_step(batch_X, training=False)
                 # X, y unpacking has been pushed downstream in skorch 0.10
                 else:
